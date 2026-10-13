@@ -1,3 +1,5 @@
+This fork serves as a platform for testing an OV7670 module for further development purposes
+
 # ESP32 I2S Camera
 
 This project shows how to record images with the ESP32 and the OV7670 camera without FIFO. An SPI TFT display is supported and a basic web server provides the images in the local network.
