@@ -1,5 +1,11 @@
 This fork serves as a platform for testing an OV7670 module for further development purposes
 
+Versions used:
+Arduino IDE 2.3.10
+esp32 (by Espressif Systems) 3.3.11
+Adafruit GFX Library 1.12.6
+Adafruit ST7735 and ST7789 Library 1.11.0
+
 # ESP32 I2S Camera
 
 This project shows how to record images with the ESP32 and the OV7670 camera without FIFO. An SPI TFT display is supported and a basic web server provides the images in the local network.
