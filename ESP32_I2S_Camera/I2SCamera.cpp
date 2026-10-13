@@ -5,6 +5,9 @@
 
 #include "I2SCamera.h"
 #include "Log.h"
+//oma lisäys, GPIO määrittely puuttuu myös ylempää mutta toivottavasti tällä pärjää
+#include "hal/gpio_ll.h" // GPIO register functions
+#include "rom/gpio.h" // gpio_matrix_in täällä?
 
 int I2SCamera::blocksReceived = 0;
 int I2SCamera::framesReceived = 0;

@@ -5,13 +5,19 @@
 OV7670::OV7670(Mode m, const int SIOD, const int SIOC, const int VSYNC, const int HREF, const int XCLK, const int PCLK, const int D0, const int D1, const int D2, const int D3, const int D4, const int D5, const int D6, const int D7)
   :i2c(SIOD, SIOC)
 {
-  ClockEnable(XCLK, 20000000); //base is 80MHz
+  //20 MHz ei passaa kun koodia on muuteltu, mm. LEDC on low speed modessa
+  DEBUG_PRINTLN("OV7670, going to ClockEnable(XCLK, 10000)");
+  ClockEnable(XCLK, 20000000);
+  //ClockEnable(XCLK, 20000000); //base is 80MHz
   
-  DEBUG_PRINT("Waiting for VSYNC...");  
+  DEBUG_PRINTLN("Waiting for VSYNC...");  
   pinMode(VSYNC, INPUT);
-  while(!digitalRead(VSYNC));
+  DEBUG_PRINTLN("pinmode configured for pin VSYNC as INPUT");
+  while(!digitalRead(VSYNC)){
+    //DEBUG_PRINTLN("VSYNC digitalRead not succesfull");
+  };
   while(digitalRead(VSYNC));
-  DEBUG_PRINTLN(" done");
+  DEBUG_PRINTLN("VSYNC done");
 
   mode = m;
   switch(mode)

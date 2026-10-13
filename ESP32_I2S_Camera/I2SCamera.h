@@ -13,8 +13,12 @@
 #include "driver/gpio.h"
 #include "driver/periph_ctrl.h"
 #include "rom/lldesc.h"
+
+//oma lisäys, valittaa IRAM_ATTR
+#include "esp_attr.h"
+
 #include "XClk.h"
-#include "DMABuffer.h"
+#include "DMABuffer.h" 
 
 class I2SCamera
 {

@@ -31,32 +31,44 @@ const int TFT_CS = 5;
 //DIN <- MOSI 23
 //CLK <- SCK 18
 
-#define ssid1        "YOUR_WIFI_SSID"
-#define password1    "YOUR_PASSWORD"
+//oma lisäys, testataan painonappia
+//#define BTN_TEST
+//#define BTN_MODE
+#ifdef BTN_MODE
+const int btn = 25;
+int btn_state = 0;
+#endif
+
+
+#define ssid        "Puheluuri"
+#define password    "videokamera"
+//#define ssid        "panoulu"
+//#define password    ""
+
 //#define ssid2        ""
 //#define password2    ""
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, 0/*no reset*/);
 OV7670 *camera;
 
-WiFiMulti wifiMulti;
-WiFiServer server(80);
+//WiFiMulti wifiMulti;
+NetworkServer server(80); //tämäkin eroaa, testaa NetworkServer luokkaa
 
 unsigned char bmpHeader[BMP::headerSize];
 
 void serve()
 {
-  WiFiClient client = server.available();
+  NetworkClient client = server.accept();
   if (client) 
   {
-    //Serial.println("New Client.");
+    Serial.println("New Client.");
     String currentLine = "";
     while (client.connected()) 
     {
       if (client.available()) 
       {
         char c = client.read();
-        //Serial.write(c);
+        Serial.write(c);
         if (c == '\n') 
         {
           if (currentLine.length() == 0) 
@@ -94,15 +106,40 @@ void serve()
     }
     // close the connection:
     client.stop();
-    //Serial.println("Client Disconnected.");
+    Serial.println("Client Disconnected.");
   }  
 }
 
 void setup() 
 {
+  #ifdef BTN_MODE
+  pinMode(btn, INPUT);
+  #endif
+
   Serial.begin(115200);
 
-  wifiMulti.addAP(ssid1, password1);
+  delay(10);
+
+  #ifndef BTN_TEST
+
+  Serial.println();
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected.");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+/*
+  wifiMulti.addAP(ssid, password); //eroaa esimerkistä?
   //wifiMulti.addAP(ssid2, password2);
   Serial.println("Connecting Wifi...");
   if(wifiMulti.run() == WL_CONNECTED) {
@@ -111,13 +148,18 @@ void setup()
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
   }
-  
+*/
+  Serial.println("mennään camera - konstruktoriin");
   camera = new OV7670(OV7670::Mode::QQVGA_RGB565, SIOD, SIOC, VSYNC, HREF, XCLK, PCLK, D0, D1, D2, D3, D4, D5, D6, D7);
+  Serial.println("cameran ja BMP bitheaderin välissä");
   BMP::construct16BitHeader(bmpHeader, camera->xres, camera->yres);
   
-  tft.initR(INITR_BLACKTAB);
-  tft.fillScreen(0);
+  //tft.initR(INITR_BLACKTAB);
+  //tft.fillScreen(0);
+  Serial.println("päästiin melkeen setupin loppuun, enää server.begin");
   server.begin();
+  Serial.println("server.begin onnistui");
+  #endif
 }
 
 void displayY8(unsigned char * frame, int xres, int yres)
@@ -150,7 +192,13 @@ void displayRGB565(unsigned char * frame, int xres, int yres)
 
 void loop()
 {
+  #ifndef BTN_TEST
   camera->oneFrame();
   serve();
-  displayRGB565(camera->frame, camera->xres, camera->yres);
+  #endif
+  #ifdef BTN_MODE
+  btn_state = digitalRead(btn);
+  Serial.println(btn_state);
+  #endif
+  //displayRGB565(camera->frame, camera->xres, camera->yres);
 }
