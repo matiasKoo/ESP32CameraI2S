@@ -7,7 +7,7 @@ def line_func(func_slope,func_x,func_b):
     ret = func_slope*func_x+func_b
     return ret
 
-img  = cv.imread('img/leds_far.png', cv.IMREAD_GRAYSCALE)
+img  = cv.imread('img/leds_near.png', cv.IMREAD_GRAYSCALE)
 assert img is not None, "file could not be read, check with os.path.exists()"
 img_width = np.shape(img)[1]
 img_height = np.shape(img)[0]
@@ -60,7 +60,7 @@ print("---------------------------------")
 lines_polar = cv.HoughLinesPointSet(
     point=points,
     lines_max=20,
-    threshold=3,
+    threshold=1,
     min_rho=0,
     max_rho=img_height,
     rho_step=1,
